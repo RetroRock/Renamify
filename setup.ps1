@@ -17,7 +17,7 @@ if ($result -eq "OK") {
         mkdir -Path $srcPath | Out-Null
         Get-ChildItem -Path .\src\ | Copy-Item -Destination $srcPath
         Set-Location -Path $fullPath
-        $batValue = "@Echo Off`n PowerShell -NoProfile -ExecutionPolicy Bypass -Command `"& {. ${fullPath}\src\RenameFiles.ps1; RenameFiles '%cd%'}`"`nPAUSE"
+        $batValue = "@Echo Off`n PowerShell -NoProfile -ExecutionPolicy Bypass -Command `"& {. ${fullPath}\src\RenameFiles.ps1; RenameFiles '%cd%'}`""
         New-Item -Path "${fullPath}\src\RenameFiles_INIT.bat" -Value $batValue | Out-Null
 
         Write-Host "Eintrag in Registrierung...`n" -ForegroundColor Green
