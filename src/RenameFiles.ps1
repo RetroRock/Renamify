@@ -26,7 +26,7 @@ Function RenameFiles {
   $objShell = New-Object -ComObject Shell.Application 
   $objFolder = $objShell.namespace($path) 
   $folderName = $objFolder.Title
-
+  
   # Removes all information but Name
   $fileNamings = @()
   $folder | ForEach-Object { $fileNamings += $_.Name }

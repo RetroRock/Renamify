@@ -1,0 +1,1 @@
+reg delete "HKCU\Software\Classes\*\shell\Run script" 
