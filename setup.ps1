@@ -17,11 +17,11 @@ if ($result -eq "OK") {
         mkdir -Path $srcPath | Out-Null
         Get-ChildItem -Path .\src\ | Copy-Item -Destination $srcPath
         Set-Location -Path $fullPath
-        $batValue = "@Echo Off`n PowerShell -NoProfile -ExecutionPolicy Bypass -Command `"& {. ${fullPath}\src\RenameFiles.ps1; RenameFiles '%cd%'}`""
+        $batValue = "@Echo Off`n PowerShell -NoProfile -ExecutionPolicy Bypass -Command `"& {. ${fullPath}\src\RenameFiles.ps1; RenameFiles '%cd%' '${fullPath}\src\UI.ps1'}`""
         New-Item -Path "${fullPath}\src\RenameFiles_INIT.bat" -Value $batValue | Out-Null
 
         Write-Host "Eintrag in Registrierung...`n" -ForegroundColor Green
-        reg add "HKCU\Software\Classes\*\shell\Run script" /d "Dateien nach Datum umbenennen" /t REG_SZ /f
+        reg add "HKCU\Software\Classes\*\shell\Run script" /d "Dateien umbenennen" /t REG_SZ /f
         reg add "HKCU\Software\Classes\*\shell\Run script\command" /t REG_SZ /d "${fullPath}\src\RenameFiles_INIT.bat" /f
         Write-Host "`nInstallation erfolgreich" -ForegroundColor Green
     }

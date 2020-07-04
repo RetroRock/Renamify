@@ -17,7 +17,8 @@ Function getUniqueName {
 
 
 Function RenameFiles { 
-  Param([string]$path) 
+  Param([string]$path, [string]$pathToUI) 
+  . $pathToUI
   $host.PrivateData.ProgressBackgroundColor = $host.UI.RawUI.BackgroundColor
   $host.privatedata.ProgressForegroundColor = "green";
   $excludedExtensions = @(".reg", ".ps1", ".bat", ".js", ".ts", ".html", ".exe", ".dll")
@@ -31,27 +32,35 @@ Function RenameFiles {
   $fileNamings = @()
   $folder | ForEach-Object { $fileNamings += $_.Name }
   $totalFilesLength = @($fileNamings).length
+
+  $options = @{Aufnahmedatum = "%cad%"; Erstelldatum = "%crd%"; ([char]0x00C4 + 'nderungsdatum') = "%chd%" }
   
+  $newFolderName = (GetNameFormat $folderName $totalFilesLength 26)
+  if (-not $newFolderName) { return }
+
   foreach ($File in $objFolder.items()) { 
     $currentName = $folder[$index].Name
     $Extension = $folder[$index].Extension
+    $newFileName = $newFolderName
     if ($Extension -and -not($excludedExtensions -contains $Extension)) {
-	$progress = [math]::floor(($index / $totalFilesLength) * 100)
+      $progress = [math]::floor(($index / $totalFilesLength) * 100)
       for ($a ; $a -le 266; $a++) {  
         $propertyName = $objFolder.getDetailsOf($objFolder.items, $a)
-        # Write-Output $objFolder.getDetailsOf($objFolder.items, $a)
-        if ($propertyName -eq "Erstelldatum" -AND $objFolder.getDetailsOf($File, $a)) {
-          $creationDate = $objFolder.getDetailsOf($File, $a).Split(" ")[0].Replace(":", ".")
-          $newNameWithoutExtension = "${folderName} ${creationDate}"
-          $newFullName = (getUniqueName $fileNamings $newNameWithoutExtension $Extension 0)
-          $fileNamings[$index] = $newFullName
-		  Write-Progress -Activity "${path}" -Status "${currentName} > ${newFullName}" -CurrentOperation "[${progress}%] Umbenennen..." -PercentComplete $progress
-          Rename-Item -Path "${path}\${currentName}" -NewName $newFullName 
-          break
+        if ($options[$propertyName] -and $newFileName -match $options.$propertyName) {
+          if ($objFolder.getDetailsOf($File, $a)) {
+            $newFileName = $newFileName.Replace($options[$propertyName], $objFolder.getDetailsOf($File, $a).Split(" ")[0].Replace(":", "."))
+          }
+          else {
+            $newFileName = $newFileName.Replace($options[$propertyName], "")
+          }
         }
       } #end for  
+      $newFullName = (getUniqueName $fileNamings $newFileName $Extension 0)
+      $fileNamings[$index] = $newFullName
+      Write-Progress -Activity "${path}" -Status "${currentName} > ${newFullName}" -CurrentOperation "[${progress}%] Umbenennen..." -PercentComplete $progress
+      Rename-Item -Path "${path}\${currentName}" -NewName $newFullName 
     }
+    $a = 0
     $index++
   } #end foreach $File 	
 } #end RenameFiles
-
