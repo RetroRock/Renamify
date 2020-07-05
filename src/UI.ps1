@@ -23,6 +23,11 @@ Function GetNameFormat() {
     $listBox.Items.Add('Aufnahmedatum (%cad%)') | Out-Null
     $listBox.Items.Add('Erstelldatum (%crd%)') | Out-Null
     $listBox.Items.Add([char]0x00C4 + 'nderungsdatum (%chd%)') | Out-Null
+    $listBox.Items.Add('Elementtyp (%ety%)') | Out-Null
+    $listBox.Items.Add('Breite (%wdth%)') | Out-Null
+    $listBox.Items.Add('H' + [char]0x00F6 + 'he' + ' (%hght%)') | Out-Null
+
+    # Breite = "%wdth%"; ('H' + [char]0x00F6 + 'he') = "%hght%" 
     $listBox.Height = 50
     $form.Controls.Add($listBox)
     
@@ -65,6 +70,9 @@ Function GetNameFormat() {
                 0 { $shortCut = '%cad%'; Break }
                 1 { $shortCut = '%crd%'; Break }
                 2 { $shortCut = '%chd%'; Break }
+                3 { $shortCut = '%ety%'; Break }
+                4 { $shortCut = '%wdth%'; Break }
+                5 { $shortCut = '%hght%'; Break }
                 Default { $shortCut = '%crd' }
             }
             if ($textBox.TextLength + $shortCut.Length -le $maxFileNameLength) {

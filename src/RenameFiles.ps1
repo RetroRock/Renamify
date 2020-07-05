@@ -33,7 +33,7 @@ Function RenameFiles {
   $folder | ForEach-Object { $fileNamings += $_.Name }
   $totalFilesLength = @($fileNamings).length
 
-  $options = @{Aufnahmedatum = "%cad%"; Erstelldatum = "%crd%"; ([char]0x00C4 + 'nderungsdatum') = "%chd%" }
+  $options = @{Aufnahmedatum = "%cad%"; Erstelldatum = "%crd%"; ([char]0x00C4 + 'nderungsdatum') = "%chd%"; Elementtyp = "%ety%"; Breite = "%wdth%"; ('H' + [char]0x00F6 + 'he') = "%hght%" }
   
   $newFolderName = (GetNameFormat $folderName $totalFilesLength 26)
   if (-not $newFolderName) { return }
@@ -46,9 +46,11 @@ Function RenameFiles {
       $progress = [math]::floor(($index / $totalFilesLength) * 100)
       for ($a ; $a -le 266; $a++) {  
         $propertyName = $objFolder.getDetailsOf($objFolder.items, $a)
+        # Write-Host $propertyName $objFolder.getDetailsOf($File, $a)
         if ($options[$propertyName] -and $newFileName -match $options.$propertyName) {
           if ($objFolder.getDetailsOf($File, $a)) {
-            $newFileName = $newFileName.Replace($options[$propertyName], $objFolder.getDetailsOf($File, $a).Split(" ")[0].Replace(":", "."))
+            # $newFileName = $newFileName.Replace($options[$propertyName], $objFolder.getDetailsOf($File, $a).Split(" ")[0].Replace(":", "."))
+            $newFileName = $newFileName.Replace($options[$propertyName], $objFolder.getDetailsOf($File, $a).Replace(":", "."))
           }
           else {
             $newFileName = $newFileName.Replace($options[$propertyName], "")
