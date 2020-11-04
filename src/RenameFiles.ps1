@@ -1,18 +1,14 @@
 Function getUniqueName {
   param ([string[]]$fileNames, [string]$name, [string]$extension, [int]$counter) 
-  $newFullName = "${name}${extension}"
   $newFullNameCounter = "${name} (${counter})${extension}"
-  if (-not ($fileNames -contains $newFullName)) {
-    return $newFullName
+
+  if (-not ($fileNames -contains $newFullNameCounter)) {
+    return $newFullNameCounter
   }
   else {
-    if (-not ($fileNames -contains $newFullNameCounter)) {
-      return $newFullNameCounter
-    }
-    else {
-      getUniqueName $fileNames $name $extension ($counter + 1)
-    }
+    getUniqueName $fileNames $name $extension ($counter + 1)
   }
+  
 }
 
 
@@ -21,9 +17,8 @@ Function RenameFiles {
   . $pathToUI
   $host.PrivateData.ProgressBackgroundColor = $host.UI.RawUI.BackgroundColor
   $host.privatedata.ProgressForegroundColor = "green";
-  $excludedExtensions = @(".reg", ".ps1", ".bat", ".js", ".ts", ".html", ".exe", ".dll")
   $index = 0;
-  $folder = Get-ChildItem $path
+  $folder = Get-ChildItem $path -Exclude *.reg, *.ps1, *.bat, *.js, *.ts, *.html, *.exe, *.dll
   $objShell = New-Object -ComObject Shell.Application 
   $objFolder = $objShell.namespace($path) 
   $folderName = $objFolder.Title
@@ -42,7 +37,7 @@ Function RenameFiles {
     $currentName = $folder[$index].Name
     $Extension = $folder[$index].Extension
     $newFileName = $newFolderName
-    if ($Extension -and -not($excludedExtensions -contains $Extension)) {
+    if ($Extension) {
       $progress = [math]::floor(($index / $totalFilesLength) * 100)
       for ($a ; $a -le 266; $a++) {  
         $propertyName = $objFolder.getDetailsOf($objFolder.items, $a)
