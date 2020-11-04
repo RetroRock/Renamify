@@ -18,7 +18,7 @@ Function RenameFiles {
   $host.PrivateData.ProgressBackgroundColor = $host.UI.RawUI.BackgroundColor
   $host.privatedata.ProgressForegroundColor = "green";
   $index = 0;
-  $folder = Get-ChildItem $path -Exclude *.reg, *.ps1, *.bat, *.js, *.ts, *.html, *.exe, *.dll
+  $folder = Get-ChildItem $path -Exclude *.reg,*.ps1,*.bat,*.js,*.ts,*.html,*.exe,*.dll
   $objShell = New-Object -ComObject Shell.Application 
   $objFolder = $objShell.namespace($path) 
   $folderName = $objFolder.Title
